@@ -1,45 +1,50 @@
 import React, { useEffect, useState } from 'react';
-import { Auth } from 'aws-amplify';
-import { useHistory } from 'react-router-dom';
+import { Amplify } from 'aws-amplify';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
   const [user, setUser] = useState(null);
-  const history = useHistory();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const currentUser = await Auth.currentAuthenticatedUser();
+        const currentUser = await Amplify.Auth.currentAuthenticatedUser();
         setUser(currentUser);
       } catch (error) {
-        history.push('/login');
+        navigate('/login');
+      } finally {
+        setLoading(false);
       }
     };
     getUser();
-  }, [history]);
+  }, [navigate]);
 
   const handleSignOut = async () => {
     try {
-      await Auth.signOut();
-      history.push('/login');
+      await Amplify.Auth.signOut();
+      navigate('/login');
     } catch (error) {
-      console.log('error signing out', error);
+      console.error('Error signing out', error);
     }
   };
 
   return (
     <div>
       <h1>Dashboard</h1>
-      {user ? (
+      {loading ? (
+        <p>Loading...</p>
+      ) : user ? (
         <>
           <p>Welcome, {user.username}</p>
           <button onClick={handleSignOut}>Sign Out</button>
         </>
       ) : (
-        <p>Loading...</p>
+        <p>Authentication failed.</p>
       )}
     </div>
   );
 };
- 
+
 export default DashboardPage;
