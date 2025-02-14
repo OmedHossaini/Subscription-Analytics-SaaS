@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
-import { Auth } from 'aws-amplify';
-import { useHistory } from 'react-router-dom';
+import { Amplify, Auth } from 'aws-amplify';
+import { useNavigate } from 'react-router-dom';
+
+// Configure Amplify (Ensure your aws-exports.js file is correctly set up)
+import awsExports from '../aws-exports';
+Amplify.configure(awsExports);
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate(); // Replaces useHistory
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       await Auth.signIn(email, password);
-      history.push('/dashboard');
+      navigate('/dashboard'); // Replaces history.push
     } catch (error) {
-      console.log('error signing in', error);
+      console.error('Error signing in:', error);
     }
   };
 
