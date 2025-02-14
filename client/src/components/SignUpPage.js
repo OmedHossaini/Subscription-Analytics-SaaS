@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { Auth } from 'aws-amplify';
-import { useHistory } from 'react-router-dom';
+import { Amplify, Auth } from 'aws-amplify';
+import { useNavigate } from 'react-router-dom';
+
+// Configure Amplify
+import awsExports from '../aws-exports';
+Amplify.configure(awsExports);
 
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate(); // Replaces useHistory
 
   const handleSignUp = async (event) => {
     event.preventDefault();
@@ -14,13 +18,11 @@ const SignUpPage = () => {
       await Auth.signUp({
         username,
         password,
-        attributes: {
-          email,
-        },
+        attributes: { email },
       });
-      history.push('/login');
+      navigate('/login'); // Replaces history.push
     } catch (error) {
-      console.log('error signing up', error);
+      console.error('Error signing up:', error);
     }
   };
 
