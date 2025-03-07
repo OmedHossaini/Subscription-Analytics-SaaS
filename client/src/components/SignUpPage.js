@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Amplify, Auth } from 'aws-amplify';
 import { useNavigate } from 'react-router-dom';
 
-// Configure Amplify
 import awsExports from '../aws-exports';
 Amplify.configure(awsExports);
 
